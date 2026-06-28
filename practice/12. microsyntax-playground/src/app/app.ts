@@ -1,4 +1,4 @@
-import { Component, signal } from '@angular/core';
+import { Component } from '@angular/core';
 import { MyFor } from './directives/my-for.directive';
 import { MyIf } from './directives/my-if.directive';
 import { MyRepeat } from './directives/my-repeat.directive';

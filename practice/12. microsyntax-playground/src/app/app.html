@@ -2,6 +2,12 @@
 
 <div *myIf></div>
 
-<div *myTimer></div>
+<!-- <div *myRepeat="5; start: 2; skip: 5"></div> -->
+<p *myRepeat="10 as total ; start: 90; skip: -10; let item; let i = index; let isLast = last">
+  Value: {{ item() }}, Index: {{ i() }}, Last: {{ isLast() }}, Total: {{ total() }}
+</p>
 
-<div *myRepeat></div>
+<!-- <div *myTimer="1000; from: 10; to: 0; step: -1"></div> -->
+<div *myTimer="1000 as interval; from: 10; to: 0; let count = value; let s = state">
+  Count: {{ count() }}, State: {{ s() }}
+</div>
