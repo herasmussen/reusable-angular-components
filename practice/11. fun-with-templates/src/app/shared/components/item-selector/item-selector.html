@@ -1,0 +1,20 @@
+<span>{{title()}}</span>
+<div class="options-list">
+  @for (option of options(); track option) {
+    @if (hasItemContainerTemplate()) {
+      <ng-container
+        *ngTemplateOutlet="itemContainerTemplate(); context: { $implicit: option, selected: selectedOption() === option, onSelect: () => select(option), }">
+      </ng-container>
+    }
+    @else {
+      <div class="option-item" [class.is-selected]="selectedOption() === option" (click)="select(option)">
+        @if(hasItemTemplate()) {
+          <ng-container *ngTemplateOutlet="itemTemplate(); context: { $implicit: option }"></ng-container>
+        }
+        @else {
+          <span>{{ option }}</span>
+        }
+      </div>
+    }
+  }
+</div>

@@ -1,59 +1,29 @@
 <div class="colors-area">
-	<div class="item-selector">
-		<span>Color</span>
-		<div class="options-list">
-			@for (color of possibleColors(); track color) {
-				<div
-					class="option-item"
-					[class.is-selected]="selectedColor() === color"
-					(click)="onColorChange(color)"
-				>
-					{{ color }}
-				</div>
-			}
+	<app-item-selector title="Color" [options]="possibleColors()" [(selectedOption)]="selectedColor">
+		<div class="color-container" [style.--color-option]="option"
+			*appItemContainerTemplate="let option; let selected = selected; let onSelect = onSelect" [class.chosen]="selected"
+			(click)="onSelect()">
+			<div class="color-preview">
+				<span>{{ option }}</span>
+			</div>
 		</div>
-	</div>
-	</div>
+		<!-- <span *appItemTemplate="let option" [style.color]="option">{{ option }}</span> -->
+	</app-item-selector>
+</div>
 
 <div class="fonts-area">
-	<div class="item-selector">
-		<span>Font</span>
-		<div class="options-list">
-			@for (font of possibleFonts(); track font) {
-				<div
-					class="option-item"
-					[class.is-selected]="selectedFont() === font"
-					(click)="onFontChange(font)"
-				>
-					{{ font }}
-				</div>
-			}
-		</div>
-	</div>
+	<app-item-selector title="Font" [options]="possibleFonts()" [(selectedOption)]="selectedFont">
+		<span *appItemTemplate="let option" [style.font-family]="option">{{ option }}</span>
+	</app-item-selector>
 </div>
 
 <div class="sizes-area">
-	<div class="item-selector">
-		<span>Size</span>
-		<div class="options-list">
-			@for (size of possibleSizes(); track size) {
-				<div
-					class="option-item"
-					[class.is-selected]="selectedSize() === size"
-					(click)="onSizeChange(size)"
-				>
-					{{ size }}
-				</div>
-			}
-		</div>
-	</div>
+	<app-item-selector title="Size" [options]="possibleSizes()" [(selectedOption)]="selectedSize">
+		<span *appItemTemplate="let option" [style.font-size]="option">{{ option }}</span>
+	</app-item-selector>
 </div>
 
 <div class="editor-area">
-	<textarea
-		placeholder="Type your text here..."
-		[style.color]="selectedColor()"
-		[style.font-family]="selectedFont()"
-		[style.font-size]="selectedSize()"
-	></textarea>
+	<textarea placeholder="Type your text here..." [style.color]="selectedColor()" [style.font-family]="selectedFont()"
+		[style.font-size]="selectedSize()"></textarea>
 </div>
