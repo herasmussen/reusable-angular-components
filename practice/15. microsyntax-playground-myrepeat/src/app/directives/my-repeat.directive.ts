@@ -1,4 +1,4 @@
-import { Directive, effect, input, Signal } from "@angular/core";
+import { computed, Directive, effect, inject, input, signal, Signal, TemplateRef, ViewContainerRef } from "@angular/core";
 
 export interface MyRepeatContext {
     readonly $implicit: Signal<number>;
@@ -18,9 +18,27 @@ export class MyRepeat {
 
     readonly myRepeatSkip = input(1);
 
+    private readonly template = inject<TemplateRef<MyRepeatContext>>(TemplateRef);
+    private readonly vcr = inject(ViewContainerRef);
+
+    private invalidate() : void {
+        const count = this.myRepeat();
+
+        while (this.vcr.length > count) {
+            this.vcr.remove(this.vcr.length - 1);
+        }
+
+        while (this.vcr.length < count) {
+            const index = signal(this.vcr.length).asReadonly();
+            const first = computed(() => index() === 0);
+            const last = computed(() => index() === this.myRepeat() - 1);
+            const value = computed(() => this.myRepeatStart() + this.myRepeatSkip() * index());
+            this.vcr.createEmbeddedView(this.template, { $implicit: value, index, first, last, myRepeat: this.myRepeat });
+        }
+    }
+
     constructor() {
-        effect(() => {
-        })
+        effect(() => this.invalidate());
     }
 
     static ngTemplateContextGuard(_: MyRepeat, ctx: unknown): ctx is MyRepeatContext {
