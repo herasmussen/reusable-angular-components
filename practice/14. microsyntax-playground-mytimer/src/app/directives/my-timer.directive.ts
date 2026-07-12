@@ -1,6 +1,7 @@
-import { Directive, effect, input, Signal } from "@angular/core";
+import { computed, Directive, effect, inject, input, signal, Signal, TemplateRef, ViewContainerRef } from "@angular/core";
 
 export type TimeState = 'running' | 'done';
+
 export interface MyTimerContext {
     readonly value: Signal<number>;
     readonly state: Signal<TimeState>;
@@ -12,19 +13,43 @@ export interface MyTimerContext {
     selector: '[myTimer]'
 })
 export class MyTimer {
-    readonly myTimer = input.required<number>();
 
+    readonly myTimer = input.required<number>();
     readonly myTimerFrom = input(0);
     readonly myTimerTo = input(Infinity);
     readonly myTimerStep = input(1);
 
+    readonly template = inject<TemplateRef<MyTimerContext>>(TemplateRef);
+    readonly vcr = inject(ViewContainerRef);
+    private readonly value = signal(0);
+    private state = computed<TimeState>(() => this.value() >= this.myTimerTo() ? 'done' : 'running');
+
     constructor() {
-        effect(() => {
-            console.log(`MyTimer Interval: ${this.myTimer()}
-                From: ${this.myTimerFrom()}, 
-                To: ${this.myTimerTo()}
-                Step: ${this.myTimerStep()}
-            `)
+        const ctx: MyTimerContext = {
+            value: this.value.asReadonly(),
+            state: this.state,
+            myTimer: this.myTimer,
+            myTimerFrom: this.myTimerFrom
+        };
+
+        this.vcr.createEmbeddedView(this.template, ctx);
+
+        effect(onCleanup => {
+            const interval = this.myTimer();
+            const from = this.myTimerFrom();
+            const to = this.myTimerTo();
+            const step = this.myTimerStep();
+
+            this.value.set(from);
+
+            const timerId = setInterval(() => {
+                this.value.update(v => Math.min(v + step, to));
+                if (this.value() >= to) {
+                    clearInterval(timerId);
+                }
+            }, interval);
+
+            onCleanup(() => clearInterval(timerId));
         })
     }
 
