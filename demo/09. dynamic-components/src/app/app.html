@@ -1,18 +1,17 @@
 <div class="catalog">
   <header class="catalog-header">
     <h1 #pickerAnchor>Product Catalog</h1>
-   
   </header>
+
   <main class="catalog-content">
-    <ng-container *ngComponentOutlet="activeViewComponent(); 
-      inputs: activeViewInputs(); injector: viewInjector"      
-      />
+    <ng-container *ngComponentOutlet="activeViewComponent(); inputs: activeViewInputs(); injector: viewInjector" />
   </main>
 
   <aside class="catalog-sidebar">
     @if (selectedProduct(); as product) {
       <app-product-detail [product]="product" />
-    } @else {
+    }
+    @else {
       <p class="placeholder">Click a product to see details</p>
     }
   </aside>
